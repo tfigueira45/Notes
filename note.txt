@@ -1,0 +1,30 @@
+/*Note template*/
+<div class="note">
+        <head>
+          <span class="noteTitle">${item.title}</span>
+        </head>
+        <div class="noteContent">${item.content}</div>
+        <div class="line"></div>
+        <footer>
+          <span class="date">${date.getDate()}/${date.getMonth()}/${date.getFullYear()}</span>
+          <span class="hour">${date.getHours()}:${date.getMinutes()}</span>
+        </footer>
+        <div class="menu">
+          <span class="material-symbols-outlined more" onclick="">more_hoiz</span>
+          <div class="material-symbols-outlined" onclick="editNote(this.parentElement.parentElement)">edit</div>
+          <div class="material-symbols-outlined" onclick="deleteNote(this.parentElement.parentElement)">delete</div>
+        </div>
+      </div>
+
+
+
+
+      <div class="notebookItem ${classe}">
+        <input type="text" value="${value}" disabled/>
+        <div>
+          <span class="material-symbols-outlined edit" onclick="editNotebook(this.parentElement.parentElement)">edit</span>
+          <span class="material-symbols-outlined del" onclick="deleteNotebook(this.parentElement.parentElement)">delete</span>
+        </div>
+      </div>
+
+      
