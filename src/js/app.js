@@ -2,10 +2,9 @@ const notebooksContainer = document.querySelector(".notebooksContainer .items");
 const notesContainer = document.querySelector(".content");
 const notebookItem = document.querySelectorAll(".notebookItem");
 const editorContainer = document.querySelector(".popup_box .popup .editor");
-const title = document.querySelector('.title');
-const saveButton = document.querySelector('.saveButton')
-const popup_box = document.querySelector('.popup_box')
-
+const title = document.querySelector(".title");
+const saveButton = document.querySelector(".saveButton");
+const popup_box = document.querySelector(".popup_box");
 
 const notebooksProto = {
   create: function (name) {
@@ -22,46 +21,32 @@ const notebooksProto = {
   },
 };
 
-const notebooks = JSON.parse(localStorage.getItem("notesDB") || "{}");
+let appState = {
+  saved: false,
+  isView: false,
+  isUpdate: false,
+  isFilled: false,
+  selectedNotebook: document.querySelector('.selected').dataset.notebook, 
+
+  setSaved: function (save) {
+    this.saved = save;
+  },
+  setIsView: function (view) {
+    this.isView = view;
+  },
+  setIsUpdate: function (update) {
+    this.isUpdate = update;
+  },
+  setIsFilled: function (fill) {
+    this.isFilled = fill;
+  },
+  setSelectedNotebook: function(notebook){
+    this.selectedNotebook = notebook;
+  }
+};
+
+let notebooks = JSON.parse(localStorage.getItem("notesDB") || "{}");
 notebooks.__proto__ = notebooksProto;
-
-function toggleInput(element, isAdd = false) {
-  const oldValue = element.querySelector("input").value;
-  focusInput(element.querySelector("input"));
-
-  let input = element.querySelector("input");
-  const elements = [
-    input,
-    input.parentElement,
-    document.querySelector(".add"),
-    document.querySelector(".edit"),
-  ];
-
-  document.body.addEventListener("click", function (event) {
-    if (!elements.includes(event.target)) {
-      element.querySelector("input").disabled = true;
-      let value = isAdd && !input.value ? "Sem título" : input.value;
-      if (isAdd) {
-        document.querySelector(".notebookItem").dataset.notebook = value;
-        notebooks.create(value);
-      } else {
-        notebooks.edit(oldValue, value);
-      }
-      input.value = value
-    }
-    localStorage.setItem("notesDB", JSON.stringify(notebooks));
-  });
-}
-
-function addNotebookButtonsListeners(){
-  document.querySelector(".del").addEventListener("click", function () {
-    deleteNotebook(this.parentElement.parentElement);
-  });
-  
-  document.querySelector(".edit").addEventListener("click", function () {
-    editNotebook(this.parentElement.parentElement);
-  });
-}
 
 function addNotebook() {
   removeAllClass("selected", ".notebookItem");
@@ -69,7 +54,7 @@ function addNotebook() {
     "afterbegin",
     notebookTemplate("selected", "")
   );
-  addNotebookButtonsListeners()
+  addNotebookButtonsListeners();
   toggleInput(document.querySelector(".notebookItem"), true);
   localStorage.setItem("notesDB", JSON.stringify(notebooks));
 }
@@ -101,27 +86,62 @@ function deleteNotebook(element) {
 }
 
 function showNotebooks(event) {
-  console.log(event)
+  console.log(event);
   const keys = Object.keys(notebooks);
-  notebooksContainer.innerHTML = '';
+  notebooksContainer.innerHTML = "";
   keys.forEach(function (key, i) {
-    if(keys.length > 0){
+    if (keys.length > 0) {
       notebooksContainer.insertAdjacentHTML(
         "afterbegin",
-        notebookTemplate(event === 'load'? i === 0 ? "selected": "" : "", key)
+        notebookTemplate(
+          event === "load" ? (i === 0 ? "selected" : "") : "",
+          key
+        )
       );
-      addNotebookButtonsListeners()
+      addNotebookButtonsListeners();
     }
   });
 }
-window.addEventListener('load', function(event){
-  showNotebooks(event.type)
-});
 
-function addNote(){
+function addNote() {
+  getNoteInfo()
+  notebooks[appState.selectedNotebook].push(noteInfo)
+  appState.setSaved(true)
 
+  /*checkSave showNotes */
 }
+
+function editNote(id){
+  appState.setIsView(false);
+  appState.setIsUpdate(true);
+  editorController(true, appState.isView)
+
+  editor.setText(notebooks[appState.selectedNotebook][id].text)
+  editor.setContents(notebooks[appState.selectedNotebook][id].contents)
+  title.value = notebooks[appState.selectedNotebook][id].title
+}
+
+function viewNote(id){
+  appState.setIsView(true);
+  editorController(true, appState.isView)
+
+  editor.setText(notebooks[appState.selectedNotebook][id].text)
+  editor.setContents(notebooks[appState.selectedNotebook][id].contents)
+  title.value = notebooks[appState.selectedNotebook][id].title
+}
+
+
+title.addEventListener("input", checkInput);
+editor.on("text-change", checkInput);
+
+document
+  .querySelector(".addNoteButtonContainer")
+  .addEventListener("click", function () {
+    editorController(false, true);
+  });
 
 document.querySelector(".add").addEventListener("click", addNotebook);
 
-
+window.addEventListener("load", function (event) {
+  showNotebooks(event.type);
+});
