@@ -51,12 +51,23 @@ function toggleInput(element, isAdd = false) {
   });
 }
 
+function addNotebookButtonsListeners(){
+  document.querySelector(".del").addEventListener("click", function () {
+    deleteNotebook(this.parentElement.parentElement);
+  });
+  
+  document.querySelector(".edit").addEventListener("click", function () {
+    editNotebook(this.parentElement.parentElement);
+  });
+}
+
 function addNotebook() {
   removeAllClass("selected", ".notebookItem");
   notebooksContainer.insertAdjacentHTML(
     "afterbegin",
     notebookTemplate("selected", "")
   );
+  addNotebookButtonsListeners()
   toggleInput(document.querySelector(".notebookItem"), true);
   localStorage.setItem("notesDB", JSON.stringify(notebooks));
 }
@@ -77,20 +88,14 @@ function deleteNotebook(element) {
 
 function showNotebooks() {
   const keys = Object.keys(notebooks);
+  notebooksContainer.innerHTML = '';
   keys.forEach(function (key, i) {
     if(keys.length > 0){
       notebooksContainer.insertAdjacentHTML(
         "afterbegin",
-        notebookTemplate(i == 0 ? "selected" : "", key)
+        notebookTemplate("", key)
       );
-      document.querySelector(".del").addEventListener("click", function () {
-        deleteNotebook(this.parentElement.parentElement);
-      });
-      
-      document.querySelector(".edit").addEventListener("click", function () {
-        editNotebook(this.parentElement.parentElement);
-      });
-      
+      addNotebookButtonsListeners()
     }
   });
 }
