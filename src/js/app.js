@@ -1,10 +1,11 @@
-import "./utils.js";
-import "./editor.js";
-
 const notebooksContainer = document.querySelector(".notebooksContainer .items");
 const notesContainer = document.querySelector(".content");
 const notebookItem = document.querySelectorAll(".notebookItem");
 const editorContainer = document.querySelector(".popup_box .popup .editor");
+const title = document.querySelector('.title');
+const saveButton = document.querySelector('.saveButton')
+const popup_box = document.querySelector('.popup_box')
+
 
 const notebooksProto = {
   create: function (name) {
@@ -39,13 +40,14 @@ function toggleInput(element, isAdd = false) {
   document.body.addEventListener("click", function (event) {
     if (!elements.includes(event.target)) {
       element.querySelector("input").disabled = true;
-      let value = isAdd && input.value == "" ? "Sem título" : input.value;
+      let value = isAdd && !input.value ? "Sem título" : input.value;
       if (isAdd) {
         document.querySelector(".notebookItem").dataset.notebook = value;
         notebooks.create(value);
       } else {
         notebooks.edit(oldValue, value);
       }
+      input.value = value
     }
     localStorage.setItem("notesDB", JSON.stringify(notebooks));
   });
@@ -78,27 +80,48 @@ function editNotebook(element) {
 
 function deleteNotebook(element) {
   const notebook = element.dataset.notebook;
-  const confirm = window.confirm(`Deseja mesmo deletar ${notebook}`);
-  if (confirm) {
+  const confirm = showAlert({
+    title: "Tem certeza?",
+    text: `Deseja deletar ${notebook}?`,
+    icon: "warning",
+    buttons: {
+      cancel: "Não",
+      catch: {
+        text: "Deletar",
+        value: "noSave",
+      },
+    },
+    dangerMode: true,
+  });
+  if (confirm == "noSave") {
     notebooks.delete(notebook);
     localStorage.setItem("notesDB", JSON.stringify(notebooks));
     showNotebooks();
   }
 }
 
-function showNotebooks() {
+function showNotebooks(event) {
+  console.log(event)
   const keys = Object.keys(notebooks);
   notebooksContainer.innerHTML = '';
   keys.forEach(function (key, i) {
     if(keys.length > 0){
       notebooksContainer.insertAdjacentHTML(
         "afterbegin",
-        notebookTemplate("", key)
+        notebookTemplate(event === 'load'? i === 0 ? "selected": "" : "", key)
       );
       addNotebookButtonsListeners()
     }
   });
 }
-showNotebooks();
+window.addEventListener('load', function(event){
+  showNotebooks(event.type)
+});
+
+function addNote(){
+
+}
 
 document.querySelector(".add").addEventListener("click", addNotebook);
+
+

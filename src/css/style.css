@@ -290,6 +290,7 @@ span.hour {
 .popup .ql-container.ql-snow {
   border: transparent;
   margin: auto;
+  height: initial;
 }
 
 .popup header .title {

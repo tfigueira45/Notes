@@ -37,3 +37,19 @@ const notebookTemplate = function (className, value) {
         </div>`;
 };
   
+function editorController(isView, address, isClose){
+  editor.setText("");
+  editor.enable(!isView)
+  title.value = ''
+  title.disabled = false;
+
+  saveButton.classList.toggle('show', isView);
+  saveButton.innerHTML = isView ? "edit" : "save";
+
+  popup_box.classList.toggle('show', !isClose)
+  container.focus()
+}
+
+async function showAlert(obj){
+  return await swal(obj)
+}
