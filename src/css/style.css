@@ -202,66 +202,40 @@ body {
   padding-top: 60px;
   margin: auto;
 }
-.main .content {
+
+.main .content p{
+  display: none;
+  margin: auto;
   font-size: 18px;
 }
 
 .main .content .note{
+  display: flex;
+  flex-direction: column;
   background: var(--note-background);
   border: 1px solid #585858;
   border-radius: 5px;
+  
 }
 
-.titleNote {
-  display: flex;
-  font-size: 24px;
-  position: relative;
-  top: 15px;
-  left: 15px;
-  height: 24px;
+.note .noteTitle{
+  padding: 10px;
 }
-.note .noteContent {
-  word-wrap: break-word;
-  font-size: 16px;
-  margin-top: 23px;
-  margin-left: 15px;
-  height: 16px;
-  width: 250px;
+
+.note .noteContent{
+  padding: 5px 10px;
 }
-footer {
-  display: inline-flex;
-}
-span.date,
-span.hour {
-  font-size: 12px;
-  position: relative;
-  bottom: -113px;
-  height: 12px;
-}
-span.date {
-  left: 15px;
-}
-span.hour {
-  right: -150px;
-}
-.more {
-  position: relative;
-  right: -225px;
-  top: -70px;
-  cursor: pointer;
-  z-index: 3;
-  height: 60px;
-  width: 60px;
-}
-.line {
+
+.note .line {
   height: 1px;
   width: 95%;
-  position: relative;
-  left: 2.5%;
-  bottom: -110px;
-  background-color: var(--color4);
+  margin: auto;
+  background-color: var(--font-color-geral);
 }
 
+.note .menu{
+  opacity: 0;
+}
 
 .popup_box{
   display: none;
@@ -336,6 +310,10 @@ span.hour {
   z-index: 3;
   display: flex;
   transform: scale(1);
+}
+
+p.show{
+  display: block;
 }
 
 

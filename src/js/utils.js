@@ -65,6 +65,7 @@ function toggleInput(element, isAdd = false) {
         notebooks.edit(oldValue, value);
       }
       input.value = value;
+      appState.setSelectedNotebook(value);
     }
     localStorage.setItem("notesDB", JSON.stringify(notebooks));
   });
@@ -81,32 +82,43 @@ function addNotebookButtonsListeners() {
   });
 }
 
-/*Controla a exibição do editor */
-function editorController(isView, isClose) {
-  editor.setText("");
-  editor.enable(!isView);
-  title.value = "";
-  title.disabled = false;
-
-  saveButton.classList.toggle("show", isView);
-  saveButton.querySelector("span").innerHTML = isView ? "edit" : "save";
-
-  popup_box.classList.toggle("show", isClose);
-  editor.focus();
-}
-
-/*Exibe alertas com a lib Swal */
-async function showAlert(obj) {
-  return await swal(obj);
-}
-
 /*Controla a exibição de saveButton */
 function checkInput() {
   appState.setIsFilled(editor.getText() != "\n");
   saveButton.classList.toggle("show", appState.isFilled);
 }
 
-function getNoteInfo(){
+function checkSave() {
+  if (!appState.saved && appState.isFilled && !appState.isView) {
+    swal({
+      title: "Tem certeza?",
+      text: "Deseja sair sem salvar a anotação?",
+      icon: "warning",
+      buttons: {
+        cancel: "Salvar",
+        catch: {
+          text: "Sair sem salvar",
+          value: "noSave",
+        },
+      },
+      dangerMode: true,
+    }).then((value) => {
+      if (value != "noSave") {
+        saveButton.click();
+        showNotes();
+      }
+      editorController(false);
+    });
+  } else {
+    appState.setSaved(false);
+    appState.setIsFilled(false);
+    saveButton.classList.remove("show");
+    editorController(false);
+  }
+  setForStorage(notebooks);
+}
+
+function getNoteInfo() {
   let currentDate = new Date();
   let date = `${format(currentDate.getDate())}/${format(
     currentDate.getMonth()
@@ -128,5 +140,9 @@ function getNoteInfo(){
     hour: hour,
   };
 
-  return noteInfo
+  return noteInfo;
+}
+
+function setForStorage(value) {
+  localStorage.setItem("notesDB", JSON.stringify(value));
 }
