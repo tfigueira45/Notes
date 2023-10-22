@@ -312,7 +312,7 @@ body {
   transform: scale(1);
 }
 
-p.show{
+.content p.show{
   display: block;
 }
 

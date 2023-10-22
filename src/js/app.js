@@ -127,6 +127,14 @@ function showNotebooks(event) {
   });
 }
 
+document.querySelectorAll('.notebookItem').forEach(function(notebook){
+  notebook.addEventListener('click', function(){
+    removeAllClass('selected', '.notebookItem')
+    notebook.classList.add('selected')
+    appState.setSelectedNotebook(notebook.dataset.notebook)
+  })
+})
+
 function addNote() {
   notebooks[appState.selectedNotebook].push(getNoteInfo());
   appState.setSaved(true);
@@ -169,9 +177,10 @@ function deleteNote(id) {
 }
 
 function showNotes() {
-  document.querySelectorAll('.note').forEach(item => item.remove())
-  notebooks[appState.selectedNotebook].forEach(function (note, id) {
-    const noteTemplate = `
+  if (notebooks[appState.selectedNotebook].length != 0) {
+    document.querySelectorAll(".note").forEach((item) => item.remove());
+    notebooks[appState.selectedNotebook].forEach(function (note, id) {
+      const noteTemplate = `
       <div class="note">
         <head>
           <span class="noteTitle">${note.title}</span>
@@ -191,12 +200,19 @@ function showNotes() {
         </div>
       </div>
     `;
-    notesContainer.insertAdjacentHTML("beforeend", noteTemplate);
-  });
-  document.querySelector('.content p').classList.toggle('show', notebooks[appState.selectedNotebook].length == 0)
+      notesContainer.insertAdjacentHTML("beforeend", noteTemplate);
+    });
+  } else {
+    document
+    .querySelector(".content p")
+    .classList.toggle(
+      "show",
+      notebooks[appState.selectedNotebook].length == 0
+    );
+  }
+  
 }
-showNotes()
-
+showNotes();
 
 title.addEventListener("input", checkInput);
 editor.on("text-change", checkInput);
@@ -210,7 +226,7 @@ document
         "Não é possivel criar notas, porque não há nenhum caderno",
         "error"
       );
-    } else{
+    } else {
       editorController(false, true);
     }
   });
