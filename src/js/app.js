@@ -3,6 +3,7 @@ const notesContainer = document.querySelector(".content");
 const notebookItem = document.querySelectorAll(".notebookItem");
 const editorContainer = document.querySelector(".popup_box .popup .editor");
 const title = document.querySelector(".title");
+const span = document.querySelector('.main .currentNotebook');
 const saveButton = document.querySelector(".saveButton");
 const popup_box = document.querySelector(".popup_box");
 
@@ -32,7 +33,7 @@ let appState = {
   theme: false,
   sidebar: false,
   idNote: undefined,
-  selectedNotebook: Object.keys(notebooks)[0],
+  selectedNotebook: Object.keys(notebooks)[Object.keys(notebooks).length - 1],
 
   setSaved: function (save) {
     this.saved = save;
@@ -58,9 +59,10 @@ let appState = {
   setSelectedNotebook: function (notebook) {
     this.selectedNotebook = notebook;
     document.querySelectorAll(".notebookItem").forEach(function (item) {
-      if (item.querySelector("input").value == notebook) {
+      if (item.dataset.notebook == notebook) {
         removeAllClass("selected", ".notebookItem");
         item.classList.add("selected");
+        span.textContent = appState.selectedNotebook
       }
     });
   },
@@ -110,9 +112,8 @@ function deleteNotebook(element) {
 }
 
 function showNotebooks(event) {
-  console.log(event);
   const keys = Object.keys(notebooks);
-  notebooksContainer.innerHTML = "";
+  document.querySelectorAll(".notebookItem").forEach((item) => item.remove());
   keys.forEach(function (key, i) {
     if (keys.length > 0) {
       notebooksContainer.insertAdjacentHTML(
@@ -125,15 +126,13 @@ function showNotebooks(event) {
       addNotebookButtonsListeners();
     }
   });
+  document.querySelectorAll(".notebookItem").forEach(function (notebook) {
+    notebook.addEventListener("click", function () {
+      appState.setSelectedNotebook(notebook.dataset.notebook);
+      showNotes();
+    });
+  });
 }
-
-document.querySelectorAll('.notebookItem').forEach(function(notebook){
-  notebook.addEventListener('click', function(){
-    removeAllClass('selected', '.notebookItem')
-    notebook.classList.add('selected')
-    appState.setSelectedNotebook(notebook.dataset.notebook)
-  })
-})
 
 function addNote() {
   notebooks[appState.selectedNotebook].push(getNoteInfo());
@@ -146,7 +145,6 @@ function editNote(id) {
   appState.setIsView(false);
   appState.setIsUpdate(true);
   editorController(true, appState.isView);
-
   editor.setText(notebooks[appState.selectedNotebook][id].text);
   editor.setContents(notebooks[appState.selectedNotebook][id].contents);
   title.value = notebooks[appState.selectedNotebook][id].title;
@@ -155,7 +153,6 @@ function editNote(id) {
 function viewNote(id) {
   appState.setIsView(true);
   editorController(true, appState.isView);
-
   editor.setText(notebooks[appState.selectedNotebook][id].text);
   editor.setContents(notebooks[appState.selectedNotebook][id].contents);
   title.value = notebooks[appState.selectedNotebook][id].title;
@@ -177,7 +174,10 @@ function deleteNote(id) {
 }
 
 function showNotes() {
-  if (notebooks[appState.selectedNotebook].length != 0) {
+  if (
+    notebooks[appState.selectedNotebook] &&
+    notebooks[appState.selectedNotebook].length > 0
+  ) {
     document.querySelectorAll(".note").forEach((item) => item.remove());
     notebooks[appState.selectedNotebook].forEach(function (note, id) {
       const noteTemplate = `
@@ -202,15 +202,20 @@ function showNotes() {
     `;
       notesContainer.insertAdjacentHTML("beforeend", noteTemplate);
     });
-  } else {
-    document
-    .querySelector(".content p")
+  } else if (
+    !notebooks[appState.selectedNotebook] ||
+    notebooks[appState.selectedNotebook].length == 0
+  ) {
+    document.querySelectorAll(".note").forEach((item) => item.remove());
+  }
+
+  notesContainer
+    .querySelector("p")
     .classList.toggle(
       "show",
-      notebooks[appState.selectedNotebook].length == 0
+      !notebooks[appState.selectedNotebook] ||
+        notebooks[appState.selectedNotebook].length == 0
     );
-  }
-  
 }
 showNotes();
 
@@ -246,5 +251,5 @@ saveButton.addEventListener("click", function () {
 });
 
 window.addEventListener("load", function (event) {
-  showNotebooks(event.type);
+  showNotebooks(event.type, true);
 });

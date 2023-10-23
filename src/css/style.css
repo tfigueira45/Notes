@@ -12,10 +12,11 @@
   --font-color-geral: #1a1919;
   --sidebar-hover-color: #8baebd;
   --linear-gradient: linear-gradient(90deg, #dd004a 0%, #fa8e00 100%);
-  --text-shadow: #2c75fd;
+  --text-shadow: #fd6e2c;
   --menu-icon-url: url("./assets/menu_light.svg");
   --theme-icon-content: "light_mode";
   --add-button-background: #ffbc90;
+  --selected-background: #eba576;
   --note-background: #ddd7d4;
 }
 
@@ -29,6 +30,7 @@
   --menu-icon-url: url("./assets/menu_dark.svg");
   --theme-icon-content: "dark_mode";
   --add-button-background: #24242c;
+  --selected-background: #1f1f2b;
   --note-background: #2e3036;
 }
 
@@ -126,11 +128,16 @@ body {
   color: var(--font-color-geral);
   margin: auto;
   cursor: pointer;
+  transition: .5s all;
 }
-.notebookItem:hover,
-.notebookItem.selected {
+.notebookItem:hover {
   background-color: var(--add-button-background);
 }
+
+.notebookItem.selected {
+  background-color: var(--selected-background);
+}
+
 .notebookItem input{
   background-color: transparent;
   border: transparent;
@@ -138,11 +145,13 @@ body {
   padding-left: 5px;
   color: var(--font-color-geral);
 }
+
 .notebookItem input:focus {
   outline: transparent;
 }
 .notebookItem input:disabled {
   color: var(--font-color-geral);
+  cursor: pointer;
 }
 .notebookItem div {
   display: none;
@@ -167,14 +176,20 @@ body {
   position: relative;
 }
 
-.main h1 {
+.main .greeting {
   padding-bottom: 10px;
   font-weight: 400;
 }
 
-.main p {
+.main .date {
   font-size: 18px;
+  padding-bottom: 20px;
 }
+
+.main .currentNotebook {
+  font-size: 20px;
+}
+
 .main .icons {
   display: flex;
   gap: 20px;
@@ -199,7 +214,7 @@ body {
   gap: 10px;
   justify-content: center;
   align-content: flex-start;
-  padding-top: 60px;
+  padding-top: 50px;
   margin: auto;
 }
 
@@ -207,6 +222,7 @@ body {
   display: none;
   margin: auto;
   font-size: 18px;
+  z-index: -1;
 }
 
 .main .content .note{
@@ -215,7 +231,7 @@ body {
   background: var(--note-background);
   border: 1px solid #585858;
   border-radius: 5px;
-  
+  transition: .2s all;
 }
 
 .note .noteTitle{
@@ -314,6 +330,8 @@ body {
 
 .content p.show{
   display: block;
+  animation: text-transition .2s;
+  
 }
 
 

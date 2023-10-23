@@ -28,7 +28,7 @@ function removeAllClass(forRemove, selector) {
 /*Modelo de notebook */
 function notebookTemplate(className, value) {
   return `<div class="notebookItem ${className}" data-notebook="${value}" >
-        <input type="text" value="${value}" disabled/>
+        <input type="text" value="${value}" readonly/>
         <div>
           <span class="material-symbols-outlined edit">edit</span>
           <span class="material-symbols-outlined del">delete</span>
@@ -38,16 +38,16 @@ function notebookTemplate(className, value) {
 
 /*Ativa e foca o input */
 function focusInput(input) {
-  input.disabled = false;
+  input.removeAttribute("readonly");
   input.focus();
 }
 
 /*Salva ou edita o notebook ao click em alguma area da pagina */
 function toggleInput(element, isAdd = false) {
-  const oldValue = element.querySelector("input").value;
+  let input = element.querySelector("input");
+  const oldValue = input.value;
   focusInput(element.querySelector("input"));
 
-  let input = element.querySelector("input");
   const elements = [
     input,
     input.parentElement,
@@ -57,7 +57,7 @@ function toggleInput(element, isAdd = false) {
 
   document.body.addEventListener("click", function (event) {
     if (!elements.includes(event.target)) {
-      element.querySelector("input").disabled = true;
+      input.setAttribute("readonly", true);
       let value = isAdd && !input.value ? "Sem título" : input.value;
       if (isAdd) {
         document.querySelector(".notebookItem").dataset.notebook = value;
@@ -147,3 +147,4 @@ function getNoteInfo() {
 function setForStorage(value) {
   localStorage.setItem("notesDB", JSON.stringify(value));
 }
+
