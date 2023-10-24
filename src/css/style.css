@@ -181,7 +181,7 @@ body {
   font-weight: 400;
 }
 
-.main .date {
+.main p.date {
   font-size: 18px;
   padding-bottom: 20px;
 }
@@ -226,15 +226,18 @@ body {
 }
 
 .main .content .note{
+  height: 150px;
   display: flex;
   flex-direction: column;
   background: var(--note-background);
   border: 1px solid #585858;
   border-radius: 5px;
   transition: .2s all;
+  position: relative;
 }
 
 .note .noteTitle{
+  font-size: 18px;
   padding: 10px;
 }
 
@@ -245,12 +248,66 @@ body {
 .note .line {
   height: 1px;
   width: 95%;
-  margin: auto;
+  margin: 0 auto 0;
   background-color: var(--font-color-geral);
+  margin: auto auto 0 auto;
 }
 
-.note .menu{
+.note footer{
+  font-size: 14px;
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 5px auto 0;
+  padding-bottom: 5px;
+}
+
+.settings{
+  width: max-content;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.settings .menu div{
+  font-size: 20px;
+  height: 30px;
+  width: 100px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+}
+
+.menu{
+  border-radius: 5px;
+  background-color: var(--add-button-background);
+  width: max-content;
+  padding-left: 10px;
+  margin-top: -25px;
+  z-index: -1;
   opacity: 0;
+}
+
+.settings .menu .delete::after,
+.settings .menu .ed::after{
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+.settings .menu .delete::after{
+  content: 'Excluir';
+}
+
+.settings .menu .ed::after{
+  content: 'Editar';
+}
+
+.more{
+  margin-left: 80px;
+  position: relative;
+  z-index: 1;
 }
 
 .popup_box{
@@ -326,6 +383,20 @@ body {
   z-index: 3;
   display: flex;
   transform: scale(1);
+}
+
+.settings.show .menu {
+  z-index: 4;
+  transition: all 0.5s;
+  opacity: 1;
+}
+
+.settings.show{
+  display: block !important; 
+}
+
+.settings.show .more{
+  z-index: -1;
 }
 
 .content p.show{

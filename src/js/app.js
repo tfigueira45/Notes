@@ -192,10 +192,10 @@ function showNotes() {
           <span class="hour">${note.hour}</span>
         </footer>
         <div class="settings">
-          <span class="material-symbols-outlined more" onclick="">more_horiz</span>
+          <span class="material-symbols-outlined more" onclick="showMenu(this)">more_horiz</span>
           <div class="menu">
-            <div class="material-symbols-outlined" onclick="editNote(${id})">edit</div>
-            <div class="material-symbols-outlined" onclick="deleteNote(${id})">delete</div>
+            <div class="material-symbols-outlined ed" onclick="editNote(${id})">edit</div>
+            <div class="material-symbols-outlined delete" onclick="deleteNote(${id})">delete</div>
           </div>
         </div>
       </div>
@@ -218,6 +218,16 @@ function showNotes() {
     );
 }
 showNotes();
+
+function showMenu(elem) {
+  const settings = elem.parentElement;
+  settings.classList.add("show");
+  document.addEventListener("click", (e) => {
+    if (e.target != elem && e.target != settings.querySelector('more') && e.target != settings.querySelector('.menu')) {
+      elem.parentElement.classList.remove("show");
+    }
+  });
+}
 
 title.addEventListener("input", checkInput);
 editor.on("text-change", checkInput);
