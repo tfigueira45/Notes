@@ -1,9 +1,9 @@
 const notebooksContainer = document.querySelector(".notebooksContainer .items");
 const notesContainer = document.querySelector(".content");
-const notebookItem = document.querySelectorAll(".notebookItem");
+let notebookItem = document.querySelectorAll(".notebookItem");
 const editorContainer = document.querySelector(".popup_box .popup .editor");
 const title = document.querySelector(".title");
-const span = document.querySelector('.main .currentNotebook');
+const span = document.querySelector(".main .currentNotebook");
 const saveButton = document.querySelector(".saveButton");
 const popup_box = document.querySelector(".popup_box");
 
@@ -62,7 +62,8 @@ let appState = {
       if (item.dataset.notebook == notebook) {
         removeAllClass("selected", ".notebookItem");
         item.classList.add("selected");
-        span.textContent = appState.selectedNotebook
+        span.textContent = appState.selectedNotebook;
+        console.log(item)
       }
     });
   },
@@ -76,7 +77,7 @@ function addNotebook() {
   );
   addNotebookButtonsListeners();
   toggleInput(document.querySelector(".notebookItem"), true);
-  setForStorage(JSON.stringify(notebooks));
+  localStorage.setItem("notesDB", JSON.stringify(notebooks));
 }
 
 function editNotebook(element) {
@@ -105,7 +106,7 @@ function deleteNotebook(element) {
         );
       }
       notebooks.delete(notebook);
-      setForStorage(JSON.stringify(notebooks));
+      localStorage.setItem("notesDB", JSON.stringify(notebooks));
       showNotebooks();
     }
   });
@@ -144,32 +145,31 @@ function addNote() {
 function editNote(id) {
   appState.setIsView(false);
   appState.setIsUpdate(true);
-  editorController(true, appState.isView);
-  editor.setText(notebooks[appState.selectedNotebook][id].text);
-  editor.setContents(notebooks[appState.selectedNotebook][id].contents);
-  title.value = notebooks[appState.selectedNotebook][id].title;
+  appState.setSaved(true)
+  editorController(appState.isView,true,id);
+  setDataEditor(id)
 }
 
 function viewNote(id) {
   appState.setIsView(true);
   editorController(true, appState.isView);
-  editor.setText(notebooks[appState.selectedNotebook][id].text);
-  editor.setContents(notebooks[appState.selectedNotebook][id].contents);
-  title.value = notebooks[appState.selectedNotebook][id].title;
+  setDataEditor(id)
 }
 
 function updateNote(id) {
-  notebooks[appState.selectedNotebook][id] = getNoteInfo();
+  notebooks[appState.selectedNotebook][id] = function(){
+    getNoteInfo()
+  };
   appState.setIsUpdate(false);
   editorController(false);
   showNotes();
 }
 
 function deleteNote(id) {
-  notebooks[appState.selectedNotebook].filter(
-    (i) => notebooks[appState.selectedNotebook].indexOf(i) != id
+  notebooks[appState.selectedNotebook].pop(
+    notebooks[appState.selectedNotebook][id]
   );
-  setForStorage(JSON.stringify(notebooks));
+  localStorage.setItem("notesDB", JSON.stringify(notebooks));
   showNotes();
 }
 
@@ -223,7 +223,11 @@ function showMenu(elem) {
   const settings = elem.parentElement;
   settings.classList.add("show");
   document.addEventListener("click", (e) => {
-    if (e.target != elem && e.target != settings.querySelector('more') && e.target != settings.querySelector('.menu')) {
+    if (
+      e.target != elem &&
+      e.target != settings.querySelector("more") &&
+      e.target != settings.querySelector(".menu")
+    ) {
       elem.parentElement.classList.remove("show");
     }
   });

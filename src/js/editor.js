@@ -26,8 +26,8 @@ function editorController(isView, isClose, idNote) {
   title.value = "";
   title.disabled = false;
 
-  saveButton.classList.toggle("show", isView);
-  saveButton.querySelector("span").innerHTML = isView ? "edit" : "save";
+  saveButton.classList.toggle("show", isView && !appState.saved);
+  saveButton.querySelector("span").innerHTML = isView && !appState.saved ? "edit" : "save";
 
   if (isView) {
     appState.setIdNote(idNote);
@@ -35,4 +35,10 @@ function editorController(isView, isClose, idNote) {
 
   popup_box.classList.toggle("show", isClose);
   editor.focus();
+}
+
+function setDataEditor(id){
+  editor.setText(notebooks[appState.selectedNotebook][id].text);
+  editor.setContents(notebooks[appState.selectedNotebook][id].contents);
+  title.value = notebooks[appState.selectedNotebook][id].title;
 }

@@ -230,10 +230,13 @@ body {
   display: flex;
   flex-direction: column;
   background: var(--note-background);
-  border: 1px solid #585858;
   border-radius: 5px;
   transition: .2s all;
   position: relative;
+}
+
+.content .note:hover{
+  transform: translateY(-5px);
 }
 
 .note .noteTitle{
@@ -243,6 +246,9 @@ body {
 
 .note .noteContent{
   padding: 5px 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .note .line {

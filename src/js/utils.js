@@ -42,6 +42,18 @@ function focusInput(input) {
   input.focus();
 }
 
+function countUntitledNotebooks(){
+  const keys = Object.keys(notebooks);
+  const regex = /Sem título/;
+  let counter = 0;
+  keys.forEach(function(key){
+    if(regex.test(key)){
+      counter++
+    }
+  })
+  return counter == 0 ? "" : String(counter);
+}
+
 /*Salva ou edita o notebook ao click em alguma area da pagina */
 function toggleInput(element, isAdd = false) {
   let input = element.querySelector("input");
@@ -58,7 +70,7 @@ function toggleInput(element, isAdd = false) {
   document.body.addEventListener("click", function (event) {
     if (!elements.includes(event.target)) {
       input.setAttribute("readonly", true);
-      let value = isAdd && !input.value ? "Sem título" : input.value;
+      let value = isAdd && !input.value ? `Sem título${countUntitledNotebooks()}` : input.value;
       if (isAdd) {
         document.querySelector(".notebookItem").dataset.notebook = value;
         notebooks.create(value);
@@ -86,7 +98,10 @@ function addNotebookButtonsListeners() {
 /*Controla a exibição de saveButton */
 function checkInput() {
   appState.setIsFilled(editor.getText() != "\n");
-  saveButton.classList.toggle("show", appState.isFilled);
+  if(appState.saved){
+    appState.setSaved(false)
+  }
+  saveButton.classList.toggle("show", appState.isFilled && !appState.saved);
 }
 
 function checkSave() {
@@ -106,17 +121,18 @@ function checkSave() {
     }).then((value) => {
       if (value != "noSave") {
         saveButton.click();
+        localStorage.setItem("notesDB", JSON.stringify(notebooks));
         showNotes();
       }
-      editorController(false);
+      editorController(false, false);
     });
   } else {
+    localStorage.setItem("notesDB", JSON.stringify(notebooks));
     appState.setSaved(false);
     appState.setIsFilled(false);
     saveButton.classList.remove("show");
     editorController(false);
   }
-  setForStorage(notebooks);
 }
 
 function getNoteInfo() {
@@ -142,9 +158,5 @@ function getNoteInfo() {
   };
 
   return noteInfo;
-}
-
-function setForStorage(value) {
-  localStorage.setItem("notesDB", JSON.stringify(value));
 }
 
