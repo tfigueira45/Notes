@@ -59,8 +59,7 @@ let appState = {
   setSelectedNotebook: function (notebook) {
     this.selectedNotebook = notebook;
     document.querySelectorAll(".notebookItem").forEach(function (item) {
-      if (item.dataset.notebook == notebook) {
-        removeAllClass("selected", ".notebookItem");
+      if (item.dataset.notebook === notebook) {
         item.classList.add("selected");
         span.textContent = appState.selectedNotebook;
         console.log(item)
@@ -70,7 +69,6 @@ let appState = {
 };
 
 function addNotebook() {
-  removeAllClass("selected", ".notebookItem");
   notebooksContainer.insertAdjacentHTML(
     "afterbegin",
     notebookTemplate("selected", "")
@@ -100,14 +98,16 @@ function deleteNotebook(element) {
     dangerMode: true,
   }).then(function (value) {
     if (value === "delete") {
-      if (appState.selectedNotebook == notebook) {
+      const oldSelected = appState.selectedNotebook;
+      notebooks.delete(notebook);
+      showNotebooks();
+      if (oldSelected === notebook) {
+        removeAllClass("selected", ".notebookItem");
         appState.setSelectedNotebook(
-          document.querySelector(".notebookItem input").value
+          document.querySelectorAll(".notebookItem input")[0].value
         );
       }
-      notebooks.delete(notebook);
       localStorage.setItem("notesDB", JSON.stringify(notebooks));
-      showNotebooks();
     }
   });
 }
@@ -120,7 +120,7 @@ function showNotebooks(event) {
       notebooksContainer.insertAdjacentHTML(
         "afterbegin",
         notebookTemplate(
-          event === "load" ? (i === keys.length - 1 ? "selected" : "") : "",
+          event === "load" ? (i === keys.length - 1 ? "selected" : "") :  key === appState.selectedNotebook ? "selected" : "",
           key
         )
       );
@@ -129,6 +129,7 @@ function showNotebooks(event) {
   });
   document.querySelectorAll(".notebookItem").forEach(function (notebook) {
     notebook.addEventListener("click", function () {
+      removeAllClass("selected", ".notebookItem");
       appState.setSelectedNotebook(notebook.dataset.notebook);
       showNotes();
     });

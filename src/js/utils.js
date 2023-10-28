@@ -67,7 +67,7 @@ function toggleInput(element, isAdd = false) {
     document.querySelector(".edit"),
   ];
 
-  document.body.addEventListener("click", function (event) {
+  function clickHandler(event) {
     if (!elements.includes(event.target)) {
       input.setAttribute("readonly", true);
       let value = isAdd && !input.value ? `Sem título${countUntitledNotebooks()}` : input.value;
@@ -78,10 +78,14 @@ function toggleInput(element, isAdd = false) {
         notebooks.edit(oldValue, value);
       }
       input.value = value;
+      removeAllClass("selected", ".notebookItem");
       appState.setSelectedNotebook(value);
+      localStorage.setItem("notesDB", JSON.stringify(notebooks));
+      document.body.removeEventListener("click", clickHandler); // Remove the event listener
     }
-    localStorage.setItem("notesDB", JSON.stringify(notebooks));
-  });
+  }
+
+  document.body.addEventListener("click", clickHandler);
 }
 
 /*Adiciona ou ouvintes nos botões dos notebooks */
