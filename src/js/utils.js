@@ -36,55 +36,73 @@ function notebookTemplate(className, value) {
       </div>`;
 }
 
+
 /*Ativa e foca o input */
 function focusInput(input) {
   input.removeAttribute("readonly");
   input.focus();
 }
 
-function countUntitledNotebooks(){
+function countUntitledNotebooks() {
   const keys = Object.keys(notebooks);
   const regex = /Sem título/;
   let counter = 0;
-  keys.forEach(function(key){
-    if(regex.test(key)){
-      counter++
+  keys.forEach(function (key) {
+    if (regex.test(key)) {
+      counter++;
     }
-  })
+  });
   return counter == 0 ? "" : String(counter);
+}
+
+function notebookClickHandler(element, event) {
+  let edit = element.querySelector(".edit");
+  let del = element.querySelector(".del");
+
+  const elements = [edit, del];
+  if (!elements.includes(event.target)) {
+    removeAllClass("selected", ".notebookItem");
+    appState.setSelectedNotebook(element.dataset.notebook);
+    showNotes();
+  }
 }
 
 /*Salva ou edita o notebook ao click em alguma area da pagina */
 function toggleInput(element, isAdd = false) {
   let input = element.querySelector("input");
   const oldValue = input.value;
-  focusInput(element.querySelector("input"));
+  focusInput(input);
 
   const elements = [
+    element,
     input,
-    input.parentElement,
+    element.querySelector(".del"),
+    element.querySelector(".edit"),
     document.querySelector(".add"),
-    document.querySelector(".edit"),
   ];
 
   function clickHandler(event) {
     if (!elements.includes(event.target)) {
       input.setAttribute("readonly", true);
-      let value = isAdd && !input.value ? `Sem título${countUntitledNotebooks()}` : input.value;
+      let value =
+        isAdd && !input.value
+          ? `Sem título${countUntitledNotebooks()}`
+          : input.value;
       if (isAdd) {
-        document.querySelector(".notebookItem").dataset.notebook = value;
+        removeAllClass("selected", ".notebookItem");
+        element.dataset.notebook = value;
         notebooks.create(value);
+        element.addEventListener("click", function (event) {
+          notebookClickHandler(element, event);
+        });
       } else {
         notebooks.edit(oldValue, value);
       }
-      input.value = value;
-      removeAllClass("selected", ".notebookItem");
       appState.setSelectedNotebook(value);
       localStorage.setItem("notesDB", JSON.stringify(notebooks));
       document.body.removeEventListener("click", clickHandler); // Remove the event listener
     }
   }
-
   document.body.addEventListener("click", clickHandler);
 }
 
@@ -102,14 +120,15 @@ function addNotebookButtonsListeners() {
 /*Controla a exibição de saveButton */
 function checkInput() {
   appState.setIsFilled(editor.getText() != "\n");
-  if(appState.saved){
-    appState.setSaved(false)
+  appState.setIsModified(true)
+  if (appState.saved) {
+    appState.setSaved(false);
   }
   saveButton.classList.toggle("show", appState.isFilled && !appState.saved);
 }
 
 function checkSave() {
-  if (!appState.saved && appState.isFilled && !appState.isView) {
+  if (!appState.saved && appState.isFilled && !appState.isView && !appState.isModified) {
     swal({
       title: "Tem certeza?",
       text: "Deseja sair sem salvar a anotação?",
@@ -163,4 +182,3 @@ function getNoteInfo() {
 
   return noteInfo;
 }
-

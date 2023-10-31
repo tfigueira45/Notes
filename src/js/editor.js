@@ -19,7 +19,6 @@ const editor = new Quill(container, {
   theme: "snow",
 });
 
-/*Controla a exibição do editor */
 function editorController(isView, isClose, idNote) {
   editor.setText("");
   editor.enable(!isView);
@@ -31,6 +30,7 @@ function editorController(isView, isClose, idNote) {
 
   if (isView) {
     appState.setIdNote(idNote);
+    title.disabled = true;
   }
 
   popup_box.classList.toggle("show", isClose);

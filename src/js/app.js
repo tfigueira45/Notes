@@ -27,6 +27,7 @@ notebooks.__proto__ = notebooksProto;
 
 let appState = {
   saved: false,
+  isModified: false,
   isView: false,
   isUpdate: false,
   isFilled: false,
@@ -37,6 +38,9 @@ let appState = {
 
   setSaved: function (save) {
     this.saved = save;
+  },
+  setIsModified: function(modified){
+    this.isModified = modified
   },
   setIsView: function (view) {
     this.isView = view;
@@ -57,14 +61,17 @@ let appState = {
     this.idNote = id;
   },
   setSelectedNotebook: function (notebook) {
-    this.selectedNotebook = notebook;
-    document.querySelectorAll(".notebookItem").forEach(function (item) {
-      if (item.dataset.notebook === notebook) {
-        item.classList.add("selected");
-        span.textContent = appState.selectedNotebook;
-        console.log(item)
-      }
-    });
+    if (!(Object.keys(notebooks).length === 0)) {
+      this.selectedNotebook = notebook;
+      document.querySelectorAll(".notebookItem").forEach(function (item) {
+        if (item.dataset.notebook === notebook) {
+          item.classList.add("selected");
+          span.textContent = appState.selectedNotebook;
+        }
+      });
+    } else {
+      span.textContent = "";
+    }
   },
 };
 
@@ -120,7 +127,13 @@ function showNotebooks(event) {
       notebooksContainer.insertAdjacentHTML(
         "afterbegin",
         notebookTemplate(
-          event === "load" ? (i === keys.length - 1 ? "selected" : "") :  key === appState.selectedNotebook ? "selected" : "",
+          event === "load"
+            ? i === keys.length - 1
+              ? "selected"
+              : ""
+            : key === appState.selectedNotebook
+            ? "selected"
+            : "",
           key
         )
       );
@@ -128,10 +141,8 @@ function showNotebooks(event) {
     }
   });
   document.querySelectorAll(".notebookItem").forEach(function (notebook) {
-    notebook.addEventListener("click", function () {
-      removeAllClass("selected", ".notebookItem");
-      appState.setSelectedNotebook(notebook.dataset.notebook);
-      showNotes();
+    notebook.addEventListener("click", function (event) {
+      notebookClickHandler(notebook, event);
     });
   });
 }
@@ -146,21 +157,19 @@ function addNote() {
 function editNote(id) {
   appState.setIsView(false);
   appState.setIsUpdate(true);
-  appState.setSaved(true)
-  editorController(appState.isView,true,id);
-  setDataEditor(id)
+  appState.setSaved(true);
+  editorController(appState.isView, true, id);
+  setDataEditor(id);
 }
 
 function viewNote(id) {
   appState.setIsView(true);
   editorController(true, appState.isView);
-  setDataEditor(id)
+  setDataEditor(id);
 }
 
 function updateNote(id) {
-  notebooks[appState.selectedNotebook][id] = function(){
-    getNoteInfo()
-  };
+  notebooks[appState.selectedNotebook][id] = getNoteInfo();
   appState.setIsUpdate(false);
   editorController(false);
   showNotes();
@@ -182,7 +191,7 @@ function showNotes() {
     document.querySelectorAll(".note").forEach((item) => item.remove());
     notebooks[appState.selectedNotebook].forEach(function (note, id) {
       const noteTemplate = `
-      <div class="note">
+      <div class="note" onclick>
         <head>
           <span class="noteTitle">${note.title}</span>
         </head>
@@ -217,6 +226,16 @@ function showNotes() {
       !notebooks[appState.selectedNotebook] ||
         notebooks[appState.selectedNotebook].length == 0
     );
+
+    document.querySelectorAll(".note").forEach(function (item) {
+      let arr = Array.from(document.querySelectorAll(".note"));
+      item.addEventListener("click", function(e){
+        if (e.target == item || e.target.parentElement == item) {
+          viewNote(arr.indexOf(item));
+          appState.setIdNote(arr.indexOf(item))
+        }
+      });
+    });
 }
 showNotes();
 
