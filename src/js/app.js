@@ -39,8 +39,8 @@ let appState = {
   setSaved: function (save) {
     this.saved = save;
   },
-  setIsModified: function(modified){
-    this.isModified = modified
+  setIsModified: function (modified) {
+    this.isModified = modified;
   },
   setIsView: function (view) {
     this.isView = view;
@@ -107,13 +107,17 @@ function deleteNotebook(element) {
     if (value === "delete") {
       const oldSelected = appState.selectedNotebook;
       notebooks.delete(notebook);
-      showNotebooks();
-      if (oldSelected === notebook) {
-        removeAllClass("selected", ".notebookItem");
-        appState.setSelectedNotebook(
-          document.querySelectorAll(".notebookItem input")[0].value
-        );
+      if (!Object.keys(notebooks).length == 0) {
+        if (oldSelected === notebook) {
+          removeAllClass("selected", ".notebookItem");
+          appState.setSelectedNotebook(
+            document.querySelectorAll(".notebookItem input")[0].value
+          );
+        }
+      }else{
+        appState.setSelectedNotebook(null)
       }
+      showNotebooks();
       localStorage.setItem("notesDB", JSON.stringify(notebooks));
     }
   });
@@ -227,15 +231,15 @@ function showNotes() {
         notebooks[appState.selectedNotebook].length == 0
     );
 
-    document.querySelectorAll(".note").forEach(function (item) {
-      let arr = Array.from(document.querySelectorAll(".note"));
-      item.addEventListener("click", function(e){
-        if (e.target == item || e.target.parentElement == item) {
-          viewNote(arr.indexOf(item));
-          appState.setIdNote(arr.indexOf(item))
-        }
-      });
+  document.querySelectorAll(".note").forEach(function (item) {
+    let arr = Array.from(document.querySelectorAll(".note"));
+    item.addEventListener("click", function (e) {
+      if (e.target == item || e.target.parentElement == item) {
+        viewNote(arr.indexOf(item));
+        appState.setIdNote(arr.indexOf(item));
+      }
     });
+  });
 }
 showNotes();
 
