@@ -115,9 +115,10 @@ function deleteNotebook(element) {
           );
         }
       }else{
-        appState.setSelectedNotebook(null)
+        appState.setSelectedNotebook('')
       }
       showNotebooks();
+      showNotes()
       localStorage.setItem("notesDB", JSON.stringify(notebooks));
     }
   });
