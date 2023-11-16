@@ -339,6 +339,8 @@ body {
   position: relative;
   border-radius: 5px;
   overflow: auto;
+  transform: scale(0);
+  transition: .2s all;
 }
 
 .popup .ql-container.ql-snow {
@@ -389,6 +391,10 @@ body {
 .show{
   z-index: 3;
   display: flex;
+  transform: scale(1);
+}
+
+.popup_box.show .popup{
   transform: scale(1);
 }
 

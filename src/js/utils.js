@@ -91,6 +91,7 @@ function toggleInput(element, isAdd = false) {
       if (isAdd) {
         removeAllClass("selected", ".notebookItem");
         element.dataset.notebook = value;
+        input.value = value;
         notebooks.create(value);
         element.addEventListener("click", function (event) {
           notebookClickHandler(element, event);
@@ -101,6 +102,7 @@ function toggleInput(element, isAdd = false) {
       appState.setSelectedNotebook(value);
       localStorage.setItem("notesDB", JSON.stringify(notebooks));
       document.body.removeEventListener("click", clickHandler); // Remove the event listener
+      showNotes(appState.selectedNotebook)
     }
   }
   document.body.addEventListener("click", clickHandler);
