@@ -336,7 +336,7 @@ body {
   width: 60%;
   height: 400px;
   color: black;
-  position: relative;
+  position: fixed;
   border-radius: 5px;
   overflow: auto;
   transform: scale(0);
