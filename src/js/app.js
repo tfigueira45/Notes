@@ -114,11 +114,11 @@ function deleteNotebook(element) {
             document.querySelectorAll(".notebookItem input")[0].value
           );
         }
-      }else{
-        appState.setSelectedNotebook('')
+      } else {
+        appState.setSelectedNotebook("");
       }
       showNotebooks();
-      showNotes()
+      showNotes();
       localStorage.setItem("notesDB", JSON.stringify(notebooks));
     }
   });
