@@ -21,7 +21,7 @@ function showDateAndMessage() {
   const year = date.getFullYear();
   const hour = date.getHours();
 
-  p.textContent = `${day} de ${months[month - 1]} de ${year}`;
+  p.textContent = `${day} de ${months[month]} de ${year}`;
 
   const greetingMessage =
     hour < 7 && hour <= 11
